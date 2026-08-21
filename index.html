@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Meta tags for SEO & Theme -->
+    <title>Aether / Synthesized Realities</title>
+    <meta name="description" content="An interactive generative soundscape, visualizer, and space clock built on custom Web Audio API synthesis. Discover and manipulate forgotten ambient frequencies of the cosmos." />
+    <meta name="theme-color" content="#040209" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+      
+      <!-- Ambient Background Canvas (Deep Starfield Particle Flow) -->
+      <canvas id="bg-starfield" class="starfield-canvas"></canvas>
+
+      <!-- Welcome / Initialize Audio Overlay -->
+      <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-content">
+          <div class="intro-logo-glow"></div>
+          <h1 class="intro-title">A E T H E R</h1>
+          <p class="intro-subtitle">The Codex of Synthesized Realities</p>
+          <div class="intro-separator"></div>
+          <p class="intro-desc">
+            An interactive sandbox of procedural audio synthesis, celestial math, and generative visuals. 
+            Everything is synthesized in real-time within your browser.
+          </p>
+          <button id="btn-enter" class="btn-enter">
+            <span>Enter the Resonance</span>
+            <div class="btn-glow"></div>
+          </button>
+          <p class="intro-warning">Please enable sound. Headphones highly recommended.</p>
+        </div>
+      </div>
+
+      <!-- App Header -->
+      <header class="app-header hidden">
+        <div class="header-logo">
+          <span class="logo-symbol">Æ</span>
+          <span class="logo-text">AETHER</span>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <nav class="app-nav">
+          <button class="nav-btn active" data-target="constellation">
+            <span class="nav-icon">✧</span> Constellation
+          </button>
+          <button class="nav-btn" data-target="clock">
+            <span class="nav-icon">⏰</span> Chrono-Resonator
+          </button>
+          <button class="nav-btn" data-target="morse">
+            <span class="nav-icon">⚡</span> Morse Messenger
+          </button>
+          <button class="nav-btn" data-target="visualizer">
+            <span class="nav-icon">📊</span> Resonance Canvas
+          </button>
+        </nav>
+
+        <!-- System Stats Telemetry -->
+        <div class="header-telemetry">
+          <div class="telemetry-item">
+            <span class="telemetry-label">OSC</span>
+            <span id="telemetry-osc" class="telemetry-value">0</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">RATE</span>
+            <span id="telemetry-rate" class="telemetry-value">44.1k</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">FPS</span>
+            <span id="telemetry-fps" class="telemetry-value">60</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Contents -->
+      <main class="app-main hidden">
+        
+        <!-- View 1: The Constellation (Spatial Mixer & Synth Designer) -->
+        <section id="view-constellation" class="app-view active">
+          <div class="view-layout">
+            <div class="canvas-container">
+              <canvas id="constellation-canvas"></canvas>
+              <div class="canvas-instructions">
+                <p>Drag nodes close to the <strong>core (center)</strong> to boost volume. Double-click a node to open its synthesizer matrix.</p>
+              </div>
+            </div>
+            
+            <div class="sidebar-container" id="synth-sidebar">
+              <div class="sidebar-placeholder">
+                <div class="placeholder-icon">✧</div>
+                <h3>Synthesizer Control Matrix</h3>
+                <p>Double-click any celestial node on the map to modify its oscillator frequencies, filter characteristics, and LFO modulators.</p>
+              </div>
+              <div class="sidebar-content hidden" id="synth-controls">
+                <div class="sidebar-header">
+                  <h3 id="node-name">Nova Pulsar</h3>
+                  <button id="btn-close-sidebar" class="btn-close">&times;</button>
+                </div>
+                <div class="control-groups">
+                  <!-- Tone controls -->
+                  <div class="control-group">
+                    <label>Oscillator Tone</label>
+                    <div class="tone-selector">
+                      <button class="tone-btn active" data-type="sine">Sine</button>
+                      <button class="tone-btn" data-type="triangle">Tri</button>
+                      <button class="tone-btn" data-type="sawtooth">Saw</button>
+                      <button class="tone-btn" data-type="square">Sq</button>
+                    </div>
+                  </div>
+                  <!-- Sliders -->
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>Base Frequency</span>
+                      <span id="val-freq">120 Hz</span>
+                    </div>
+                    <input type="range" id="slider-freq" min="40" max="600" step="1" value="120" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>Filter Cutoff</span>
+                      <span id="val-filter">800 Hz</span>
+                    </div>
+                    <input type="range" id="slider-filter" min="100" max="4000" step="1" value="800" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>Filter Resonance (Q)</span>
+                      <span id="val-q">1.0</span>
+                    </div>
+                    <input type="range" id="slider-q" min="0.1" max="15" step="0.1" value="1.0" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>LFO Speed</span>
+                      <span id="val-lfo-rate">0.5 Hz</span>
+                    </div>
+                    <input type="range" id="slider-lfo-rate" min="0.05" max="10" step="0.05" value="0.5" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>LFO Depth (Filter Mod)</span>
+                      <span id="val-lfo-depth">50%</span>
+                    </div>
+                    <input type="range" id="slider-lfo-depth" min="0" max="100" step="1" value="50" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>Echo Delay Time</span>
+                      <span id="val-delay">0.3s</span>
+                    </div>
+                    <input type="range" id="slider-delay" min="0.05" max="1" step="0.01" value="0.3" />
+                  </div>
+                  <div class="control-group">
+                    <div class="slider-header">
+                      <span>Delay Feedback</span>
+                      <span id="val-feedback">30%</span>
+                    </div>
+                    <input type="range" id="slider-feedback" min="0" max="90" step="1" value="30" />
+                  </div>
+                  <div class="sidebar-actions">
+                    <button id="btn-node-mute" class="btn-action-outline">Mute Node</button>
+                    <button id="btn-node-solo" class="btn-action-outline">Solo Node</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 2: Chrono-Resonator (Time Clock Synth) -->
+        <section id="view-clock" class="app-view">
+          <div class="clock-layout">
+            <div class="clock-display-panel">
+              <div class="clock-card">
+                <div class="clock-telemetry">CHRONO RESONATOR ENCODING ACTIVE</div>
+                <div id="chrono-time" class="chrono-time">00:00:00</div>
+                <div id="chrono-date" class="chrono-date">FRIDAY, AUGUST 21, 2026</div>
+              </div>
+              <div class="clock-description">
+                <h3>Temporal Harmonic Mapping</h3>
+                <p>The time of day is translated dynamically into a harmonic progression. Every second modulates the filter sweeps, and every minute registers structural tone shifts in the underlying polyphonic drone.</p>
+                <div class="drone-telemetry-container">
+                  <div class="telemetry-bar">
+                    <span>Root Freq (Hour)</span>
+                    <span id="val-root-freq">65.4 Hz</span>
+                  </div>
+                  <div class="telemetry-bar">
+                    <span>Chord Interval (Minute)</span>
+                    <span id="val-chord-interval">Minor 9th</span>
+                  </div>
+                  <div class="telemetry-bar">
+                    <span>Oscillator Count</span>
+                    <span>4 Voice Sub-Additive</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="clock-canvas-panel">
+              <canvas id="clock-vector-canvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 3: Morse Messenger (Procedural Signal Light) -->
+        <section id="view-morse" class="app-view">
+          <div class="morse-layout">
+            <div class="morse-input-panel">
+              <h2>Transmit Morse Resonance</h2>
+              <p>Type a message to translate it into a rhythmic spatial laser transmission and high-frequency sound wave pulses running through an automated feedback delay loop.</p>
+              
+              <div class="morse-input-group">
+                <textarea id="morse-text" placeholder="Type message here (e.g. HELLO WORLD or COLD DUST IN SPACE)..." maxlength="150"></textarea>
+                <div class="text-counter"><span id="char-count">0</span> / 150</div>
+              </div>
+
+              <div class="morse-controls">
+                <div class="control-group inline">
+                  <label for="slider-morse-wpm">Speed (WPM):</label>
+                  <input type="range" id="slider-morse-wpm" min="8" max="25" step="1" value="15" />
+                  <span id="val-morse-wpm">15 WPM</span>
+                </div>
+                
+                <div class="control-group inline">
+                  <label for="slider-morse-pitch">Tone Pitch:</label>
+                  <input type="range" id="slider-morse-pitch" min="300" max="1500" step="10" value="800" />
+                  <span id="val-morse-pitch">800 Hz</span>
+                </div>
+              </div>
+
+              <div class="morse-buttons">
+                <button id="btn-morse-play" class="btn-action">Transmit Signal</button>
+                <button id="btn-morse-stop" class="btn-action-outline disabled" disabled>Halt Transmission</button>
+              </div>
+            </div>
+
+            <div class="morse-output-panel">
+              <div class="morse-terminal">
+                <div class="terminal-header">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                  <span class="terminal-title">TRANSMITTER SIGNAL FEED</span>
+                </div>
+                <div id="morse-terminal-body" class="terminal-body">
+                  <div class="terminal-line system">> TRANSMITTER INITIALIZED. STANDBY...</div>
+                </div>
+              </div>
+              
+              <!-- Large light beacon indicator -->
+              <div class="beacon-container">
+                <div id="morse-beacon" class="morse-beacon"></div>
+                <div id="morse-char-display" class="morse-char-display">-</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 4: Full Resonance Visualizer -->
+        <section id="view-visualizer" class="app-view">
+          <div class="visualizer-layout">
+            <div class="visualizer-options">
+              <button class="vis-opt-btn active" data-preset="circular">Hyper-Spectrum (3D Circle)</button>
+              <button class="vis-opt-btn" data-preset="nebula">Nebula Pulse (Particles)</button>
+              <button class="vis-opt-btn" data-preset="waves">Aether Waves (Gradients)</button>
+            </div>
+            
+            <div class="visualizer-canvas-wrapper">
+              <canvas id="resonance-canvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Floating Bottom Control Bar -->
+      <footer class="app-footer hidden">
+        <div class="footer-control-left">
+          <!-- Play / Pause Audio Engine -->
+          <button id="btn-master-play" class="btn-play-pause" title="Play / Pause Audio Engine">
+            <span class="play-icon">▶</span>
+          </button>
+          
+          <!-- Presets -->
+          <div class="preset-control">
+            <label for="select-preset">Atmosphere:</label>
+            <select id="select-preset">
+              <option value="cosmic">Cosmic Wind (Warm & Airy)</option>
+              <option value="ocean">Abyssal Vent (Sub-Drone & Heavy)</option>
+              <option value="retro">Vintage Core (Arpeggiated Glow)</option>
+              <option value="rain">Cyberpunk Storm (Filter Sweeps)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="footer-control-center">
+          <div class="analyzer-sparkline-container">
+            <canvas id="sparkline-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="footer-control-right">
+          <!-- Volume control -->
+          <div class="volume-slider-container">
+            <span class="volume-icon">🔊</span>
+            <input type="range" id="slider-master-volume" min="0" max="100" value="70" />
+            <span id="val-master-volume" class="volume-value">70%</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+    
+    <!-- App Entry Javascript -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
