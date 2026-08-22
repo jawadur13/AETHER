@@ -395,15 +395,27 @@ export class AudioEngine {
     }
   }
 
+  // Bring a node's output in line with its current mute state.
+  // Nodes muted at engine start have no graph yet, so they must be built on unmute.
+  applyNodeAudibility(node) {
+    if (node.mute) {
+      if (node.spatialGain) {
+        node.spatialGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.05);
+      }
+      return;
+    }
+    
+    if (this.isPlaying && !node.active) {
+      this.fadeInNode(node);
+    }
+  }
+
   toggleNodeMute(nodeId) {
     const node = this.nodes.find(n => n.id === nodeId);
     if (!node) return false;
     node.mute = !node.mute;
     
-    // Force mute update through spatial gain
-    if (node.mute) {
-      if (node.spatialGain) node.spatialGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.05);
-    }
+    this.applyNodeAudibility(node);
     return node.mute;
   }
 
