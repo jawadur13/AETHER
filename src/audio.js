@@ -423,10 +423,13 @@ export class AudioEngine {
     const targetNode = this.nodes.find(n => n.id === nodeId);
     if (!targetNode) return false;
     
+    const wasAnySolo = this.nodes.some(n => n.solo);
     targetNode.solo = !targetNode.solo;
     const isAnySolo = this.nodes.some(n => n.solo);
 
-    if (isAnySolo) {
+    // Only snapshot on the transition into solo mode, otherwise later toggles
+    // would overwrite the backup with solo-induced mute states
+    if (isAnySolo && !wasAnySolo) {
       this.nodes.forEach(node => {
         node.wasMuteBeforeSolo = node.mute;
       });
@@ -434,16 +437,12 @@ export class AudioEngine {
 
     this.nodes.forEach(node => {
       if (isAnySolo) {
-        if (node.solo) {
-          node.mute = false;
-        } else {
-          node.mute = true;
-          if (node.spatialGain) node.spatialGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.05);
-        }
+        node.mute = !node.solo;
       } else {
         node.mute = node.wasMuteBeforeSolo ?? false;
         node.wasMuteBeforeSolo = null;
       }
+      this.applyNodeAudibility(node);
     });
 
     return targetNode.solo;
