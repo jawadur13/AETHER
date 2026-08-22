@@ -77,9 +77,10 @@ export class Visualizer {
   start() {
     if (this.animationId) return;
     
-    const bufferLength = this.audio.analyzer ? this.audio.analyzer.frequencyBinCount : 256;
-    this.freqData = new Uint8Array(bufferLength);
-    this.timeData = new Uint8Array(bufferLength);
+    const analyzer = this.audio.analyzer;
+    // getByteFrequencyData needs frequencyBinCount, getByteTimeDomainData needs fftSize
+    this.freqData = new Uint8Array(analyzer ? analyzer.frequencyBinCount : 256);
+    this.timeData = new Uint8Array(analyzer ? analyzer.fftSize : 512);
     
     const renderLoop = () => {
       this.render();
