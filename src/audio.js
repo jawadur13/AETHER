@@ -514,7 +514,7 @@ export class AudioEngine {
   }
 
   stopClockDrone() {
-    if (!this.clockSynth.isActive) return;
+    if (!this.initialized || !this.clockSynth.isActive) return;
     const time = this.ctx.currentTime;
     
     // Snapshot the current generation so a restart during the fade cannot
