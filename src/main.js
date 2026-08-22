@@ -145,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   btnEnter.addEventListener("click", () => {
     // 1. Boot audio context
     audio.resume();
+    setPlayButtonState(true);
     
     // Set audio rate indicator
     if (telemetryRate && audio.ctx) {
