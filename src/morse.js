@@ -35,7 +35,7 @@ export class MorseEngine {
   // Parse text into a list of timed steps (on/off events)
   buildSequence(translated, wpm) {
     // Standard WPM formula: dot duration = 1200 / WPM (milliseconds)
-    const dotDuration = 1200 / wpm;
+    const dotDuration = 1250 / wpm;
     const dashDuration = dotDuration * 3;
     const symbolSpace = dotDuration;       // space between dots/dashes within char
     const charSpace = dotDuration * 3;       // space between characters
