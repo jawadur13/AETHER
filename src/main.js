@@ -128,6 +128,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let chronoClock = null;
   let morse = null;
 
+  // Footer play/pause button (referenced early so intro can sync its state)
+  const btnMasterPlay = document.getElementById("btn-master-play");
+  const selectPreset = document.getElementById("select-preset");
+  const sliderMasterVolume = document.getElementById("slider-master-volume");
+  const valMasterVolume = document.getElementById("val-master-volume");
+
+  function setPlayButtonState(isPlaying) {
+    btnMasterPlay.innerHTML = isPlaying
+      ? `<span class="play-icon">❚❚</span>`
+      : `<span class="play-icon">▶</span>`;
+    btnMasterPlay.classList.toggle("playing", isPlaying);
+  }
+
   // --- WELCOME TAP GESTURE (ENTER THE RESONANCE) ---
   btnEnter.addEventListener("click", () => {
     // 1. Boot audio context
@@ -209,25 +222,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- FLOATING CONTROL PANEL HANDLERS ---
-  const btnMasterPlay = document.getElementById("btn-master-play");
-  const selectPreset = document.getElementById("select-preset");
-  const sliderMasterVolume = document.getElementById("slider-master-volume");
-  const valMasterVolume = document.getElementById("val-master-volume");
-
   // Play/Pause Master Switcher
   btnMasterPlay.addEventListener("click", () => {
     if (audio.isPlaying) {
       audio.suspend();
-      btnMasterPlay.innerHTML = `<span class="play-icon">▶</span>`;
-      btnMasterPlay.classList.remove("playing");
+      setPlayButtonState(false);
       
       // Also halt clock drone, morse signals
       audio.stopClockDrone();
       if (morse) morse.stop();
     } else {
       audio.resume();
-      btnMasterPlay.innerHTML = `<span class="play-icon">❚❚</span>`;
-      btnMasterPlay.classList.add("playing");
+      setPlayButtonState(true);
       
       // Resume clock drone if active tab
       const isClockTab = document.querySelector(".nav-btn[data-target='clock']").classList.contains("active");
