@@ -454,7 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Play Morse Action
   btnMorsePlay.addEventListener("click", () => {
     const text = morseText.value.trim();
-    if (!text) return;
+    if (!text || !morse) return;
     
     const wpm = parseInt(sliderMorseWpm.value);
     const pitch = parseInt(sliderMorsePitch.value);
