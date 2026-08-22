@@ -508,23 +508,26 @@ export class AudioEngine {
   stopClockDrone() {
     if (!this.clockSynth.isActive) return;
     const time = this.ctx.currentTime;
+    
+    // Snapshot the current generation so a restart during the fade cannot
+    // have its fresh voices torn down by this teardown timer
     const oldMasterGain = this.clockSynth.masterGain;
+    const oldVoices = this.clockSynth.voices;
     
     this.clockSynth.isActive = false;
+    this.clockSynth.voices = [];
+    this.clockSynth.filters = [];
+    this.clockSynth.masterGain = null;
+    this.clockSynth.rootFreq = null;
+    
     oldMasterGain.gain.setTargetAtTime(0, time, 0.2);
     
     setTimeout(() => {
-      this.clockSynth.voices.forEach(voice => {
+      oldVoices.forEach(voice => {
         voice.osc.stop();
         this.activeOscCount--;
       });
-      
-      if (this.clockSynth.masterGain === oldMasterGain) {
-        this.clockSynth.voices = [];
-        this.clockSynth.filters = [];
-        oldMasterGain.disconnect();
-        this.clockSynth.masterGain = null;
-      }
+      oldMasterGain.disconnect();
     }, 500);
   }
 
