@@ -29,7 +29,7 @@ export class AudioEngine {
     
     // Master Node Graph Setup
     this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime); // Default volume 70%
+    this.masterGain.gain.setValueAtTime(0.75, this.ctx.currentTime); // Default volume 75%
     
     this.analyzer = this.ctx.createAnalyser();
     this.analyzer.fftSize = 512;
