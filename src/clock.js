@@ -108,7 +108,7 @@ export class ChronoClock {
     const maxRadius = Math.min(cx, cy) * 0.85;
     const hrRadius = maxRadius * 0.42;
     const minRadius = maxRadius * 0.70;
-    const secRadius = maxRadius * 0.95;
+    const secRadius = maxRadius * 0.92;
     
     // Draw Orbits
     this.drawOrbitRing(cx, cy, hrRadius, "rgba(124, 58, 237, 0.15)", "HOUR LINE");
