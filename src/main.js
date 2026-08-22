@@ -193,8 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
           chronoClock.stop();
           chronoClock.start();
         }
+        if (audio.isPlaying) audio.startClockDrone();
       } else {
         if (chronoClock) chronoClock.stop();
+        audio.stopClockDrone();
       }
       
       // Force trigger canvas resize updates on view activation
