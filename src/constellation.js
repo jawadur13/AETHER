@@ -75,7 +75,7 @@ export class Constellation {
     const h = this.canvas.height / window.devicePixelRatio;
     
     // Hit radius 25px
-    const hitRadius = 25;
+    const hitRadius = 30;
     
     for (const node of this.audio.nodes) {
       const nx = node.x * w;
