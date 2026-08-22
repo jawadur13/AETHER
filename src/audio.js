@@ -61,9 +61,6 @@ export class AudioEngine {
       if (node.mute) return;
       this.fadeInNode(node);
     });
-
-    // Start clock synth drone
-    this.startClockDrone();
   }
 
   suspend() {
