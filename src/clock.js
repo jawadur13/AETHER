@@ -106,7 +106,7 @@ export class ChronoClock {
     
     // Orbit Radii
     const maxRadius = Math.min(cx, cy) * 0.85;
-    const hrRadius = maxRadius * 0.45;
+    const hrRadius = maxRadius * 0.42;
     const minRadius = maxRadius * 0.70;
     const secRadius = maxRadius * 0.95;
     
