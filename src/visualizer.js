@@ -15,14 +15,14 @@ export class Visualizer {
     this.freqData = null;
     this.timeData = null;
     
+    // Handle resizing (must run before particles so they spawn across the real canvas)
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+    
     // Particle system for "nebula" preset
     this.particles = [];
     this.maxParticles = 120;
     this.initParticles();
-    
-    // Handle resizing
-    this.resize();
-    window.addEventListener("resize", () => this.resize());
     
     // Waveform phase shifts
     this.wavePhase = 0;
