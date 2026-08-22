@@ -25,7 +25,7 @@ class TelemetryTracker {
       const now = performance.now();
       const delta = now - this.lastTime;
       
-      if (delta >= 1000) {
+      if (delta >= 500) {
         const fps = Math.round((this.frameCount * 1000) / delta);
         if (this.fpsEl) this.fpsEl.textContent = fps;
         this.frameCount = 0;
