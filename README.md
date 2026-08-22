@@ -78,3 +78,9 @@ To build a production-ready optimized package:
 npm run build
 ```
 This outputs compiled assets into a `dist/` directory, which can be deployed directly to any static web hosting provider (Vercel, Netlify, GitHub Pages, etc.).
+
+## Roadmap
+
+- Add MIDI input mapping for the Constellation Mixer.
+- Persist dashboard state to `localStorage`.
+- Export generative sessions as audio loops.
