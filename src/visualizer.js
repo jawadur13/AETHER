@@ -17,7 +17,7 @@ export class Visualizer {
     
     // Particle system for "nebula" preset
     this.particles = [];
-    this.maxParticles = 80;
+    this.maxParticles = 120;
     this.initParticles();
     
     // Handle resizing
