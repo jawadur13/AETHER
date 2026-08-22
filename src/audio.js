@@ -209,6 +209,16 @@ export class AudioEngine {
     if (!node.active) return;
     const time = this.ctx.currentTime;
     
+    // Halt sequencer chains so fadeInNode cannot stack duplicate timers
+    if (node.chimeTimer) {
+      clearTimeout(node.chimeTimer);
+      node.chimeTimer = null;
+    }
+    if (node.arpTimer) {
+      clearTimeout(node.arpTimer);
+      node.arpTimer = null;
+    }
+    
     try {
       node.nodeGain.gain.setTargetAtTime(0, time, 0.05);
       
